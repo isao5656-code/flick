@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>flick</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="page-header">
+        <h1>flick</h1>
+        <p class="subtitle">スマホでも全体が見切れないレイアウト</p>
+      </header>
+
+      <main class="content" aria-label="メインコンテンツ">
+        <section class="panel">
+          <h2>今日の学習</h2>
+          <p>5問 / 20問</p>
+          <div class="progress" role="progressbar" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">
+            <span style="width: 25%"></span>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>単語カード</h2>
+          <ul class="cards">
+            <li><strong>apple</strong><span>りんご</span></li>
+            <li><strong>orange</strong><span>オレンジ</span></li>
+            <li><strong>grape</strong><span>ぶどう</span></li>
+          </ul>
+        </section>
+      </main>
+
+      <footer class="page-footer">
+        <button type="button">次へ</button>
+      </footer>
+    </div>
+  </body>
+</html>
