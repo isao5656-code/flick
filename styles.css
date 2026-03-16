@@ -1,0 +1,151 @@
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  overflow-x: hidden;
+  font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", system-ui, -apple-system, sans-serif;
+  background: radial-gradient(circle at top, #1f2937, #0b1020 55%);
+  color: #f8fafc;
+}
+
+.app-shell {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: max(14px, var(--safe-top)) max(14px, var(--safe-right)) max(18px, var(--safe-bottom)) max(14px, var(--safe-left));
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: clamp(1.4rem, 4.2vw, 1.9rem);
+}
+
+.app-header p {
+  margin: 6px 0 0;
+  color: #cbd5e1;
+  font-size: 0.93rem;
+}
+
+.status-panel {
+  background: rgba(15, 23, 42, 0.66);
+  border: 1px solid #334155;
+  border-radius: 14px;
+  padding: 10px 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  text-align: center;
+}
+
+.label {
+  display: block;
+  font-size: 0.73rem;
+  color: #94a3b8;
+}
+
+.target {
+  font-size: 1.9rem;
+  line-height: 1;
+}
+
+.feedback {
+  margin: 0;
+  min-height: 1.5em;
+  font-weight: 700;
+}
+
+.feedback[data-state="ok"] {
+  color: #86efac;
+}
+
+.feedback[data-state="ng"] {
+  color: #fda4af;
+}
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(88px, 1fr));
+  gap: 10px;
+}
+
+.flick-key {
+  position: relative;
+  border: 1px solid #475569;
+  background: linear-gradient(180deg, #1e293b, #0f172a);
+  color: #f8fafc;
+  border-radius: 16px;
+  aspect-ratio: 1 / 1;
+  touch-action: none;
+  padding: 0;
+}
+
+.flick-key.active {
+  transform: scale(0.98);
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.3);
+}
+
+.center {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 1.9rem;
+  font-weight: 800;
+}
+
+.dir {
+  position: absolute;
+  font-size: 0.9rem;
+  color: #cbd5e1;
+}
+
+.up {
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.right {
+  right: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.down {
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.left {
+  left: 7px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.hint {
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.hint p {
+  margin: 0;
+}
