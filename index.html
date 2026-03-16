@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Flick Trainer</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="app-header">
+        <h1>🎮 フリック道場</h1>
+        <p>お題のかなを、12キーのフリックで素早く入力しよう！</p>
+      </header>
+
+      <section class="status-panel">
+        <div>
+          <span class="label">お題</span>
+          <strong id="targetKana" class="target">あ</strong>
+        </div>
+        <div>
+          <span class="label">スコア</span>
+          <strong id="score">0</strong>
+        </div>
+        <div>
+          <span class="label">れんぞく</span>
+          <strong id="streak">0</strong>
+        </div>
+      </section>
+
+      <p id="feedback" class="feedback" aria-live="polite">キーをタップ/フリックしてスタート！</p>
+
+      <section class="keypad" id="keypad"></section>
+
+      <div class="hint">
+        <p>操作: タップ=中央文字 / 上下左右フリック=別文字</p>
+      </div>
+    </main>
+
+    <script>
+      const KEY_LAYOUT = [
+        { base: "あ", map: { tap: "あ", up: "い", right: "う", down: "え", left: "お" } },
+        { base: "か", map: { tap: "か", up: "き", right: "く", down: "け", left: "こ" } },
+        { base: "さ", map: { tap: "さ", up: "し", right: "す", down: "せ", left: "そ" } },
+        { base: "た", map: { tap: "た", up: "ち", right: "つ", down: "て", left: "と" } },
+        { base: "な", map: { tap: "な", up: "に", right: "ぬ", down: "ね", left: "の" } },
+        { base: "は", map: { tap: "は", up: "ひ", right: "ふ", down: "へ", left: "ほ" } },
+        { base: "ま", map: { tap: "ま", up: "み", right: "む", down: "め", left: "も" } },
+        { base: "や", map: { tap: "や", up: "（", right: "ゆ", down: "）", left: "よ" } },
+        { base: "ら", map: { tap: "ら", up: "り", right: "る", down: "れ", left: "ろ" } },
+        { base: "わ", map: { tap: "わ", up: "を", right: "ん", down: "ー", left: "、" } }
+      ];
+
+      const kanaPool = [...new Set(KEY_LAYOUT.flatMap((key) => Object.values(key.map)).filter(Boolean))];
+
+      const targetKanaEl = document.getElementById("targetKana");
+      const scoreEl = document.getElementById("score");
+      const streakEl = document.getElementById("streak");
+      const feedbackEl = document.getElementById("feedback");
+      const keypadEl = document.getElementById("keypad");
+
+      let score = 0;
+      let streak = 0;
+      let targetKana = randomKana();
+      targetKanaEl.textContent = targetKana;
+
+      function randomKana() {
+        return kanaPool[Math.floor(Math.random() * kanaPool.length)];
+      }
+
+      function getDirection(dx, dy) {
+        const threshold = 24;
+        if (Math.hypot(dx, dy) < threshold) return "tap";
+        if (Math.abs(dx) > Math.abs(dy)) return dx > 0 ? "right" : "left";
+        return dy > 0 ? "down" : "up";
+      }
+
+      function updateFeedback(message, type) {
+        feedbackEl.textContent = message;
+        feedbackEl.dataset.state = type;
+      }
+
+      function judge(inputKana) {
+        if (inputKana === targetKana) {
+          score += 10;
+          streak += 1;
+          targetKana = randomKana();
+          targetKanaEl.textContent = targetKana;
+          updateFeedback(`✅ ${inputKana} 正解！`, "ok");
+          if (streak % 5 === 0) {
+            updateFeedback(`🔥 ${streak}連続！ナイスフリック！`, "ok");
+          }
+        } else {
+          streak = 0;
+          updateFeedback(`❌ ${inputKana}（お題: ${targetKana}）`, "ng");
+        }
+        scoreEl.textContent = String(score);
+        streakEl.textContent = String(streak);
+      }
+
+      function createKey(keyDef) {
+        const button = document.createElement("button");
+        button.className = "flick-key";
+        button.type = "button";
+        button.innerHTML = `
+          <span class="center">${keyDef.map.tap}</span>
+          <span class="dir up">${keyDef.map.up ?? ""}</span>
+          <span class="dir right">${keyDef.map.right ?? ""}</span>
+          <span class="dir down">${keyDef.map.down ?? ""}</span>
+          <span class="dir left">${keyDef.map.left ?? ""}</span>
+        `;
+
+        let startX = 0;
+        let startY = 0;
+
+        button.addEventListener("pointerdown", (event) => {
+          startX = event.clientX;
+          startY = event.clientY;
+          button.setPointerCapture(event.pointerId);
+          button.classList.add("active");
+        });
+
+        button.addEventListener("pointerup", (event) => {
+          const dx = event.clientX - startX;
+          const dy = event.clientY - startY;
+          const direction = getDirection(dx, dy);
+          const inputKana = keyDef.map[direction] || keyDef.map.tap;
+          judge(inputKana);
+          button.classList.remove("active");
+        });
+
+        button.addEventListener("pointercancel", () => {
+          button.classList.remove("active");
+        });
+
+        return button;
+      }
+
+      KEY_LAYOUT.forEach((key) => keypadEl.appendChild(createKey(key)));
+    </script>
+  </body>
+</html>
